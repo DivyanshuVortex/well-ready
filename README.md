@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# well-ready
 
-## Getting Started
+[![npm version](https://img.shields.io/npm/v/well-ready.svg?style=flat-square)](https://www.npmjs.com/package/well-ready)
+[![npm downloads](https://img.shields.io/npm/dm/well-ready.svg?style=flat-square)](https://www.npmjs.com/package/well-ready)
+[![CLI Tool](https://img.shields.io/badge/CLI-Tool-blue?style=flat-square)](https://www.npmjs.com/package/well-ready)
 
-First, run the development server:
+🚀 **Well-Ready: Bootstrap your Next.js project instantly, preconfigured with Tailwind CSS, ESLint, and Prettier for a seamless development experience.**
 
+## Features
+
+- 📦 **Next.js Setup**: Initializes a fresh Next.js project with the latest stable version.
+- 🎨 **Tailwind CSS Integration**: Fully configured Tailwind CSS for rapid UI development.
+- 🔍 **ESLint Configuration**: Enforces code quality with standard ESLint rules and plugins.
+- ✨ **Prettier Formatting**: Automatic code formatting for consistent style across your project.
+- ⚡ **Quick Start**: One-command setup to get you coding faster without manual configurations.
+
+## Usage
+
+Get started effortlessly with `npx` for a one-time use, or install globally for repeated access.
+
+### Quick Run (Recommended)
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npx well-ready
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Well-Ready can bootstrap a variety of web applications, including:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js projects
+- MERN (basic or TypeScript + Tailwind CSS) stacks
+- Turbo apps
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+And other modern web app templates
+Simply run the command, follow the interactive prompts, and your project will be ready with all configurations in place.
+## License
 
-## Learn More
+MIT License
 
-To learn more about Next.js, take a look at the following resources:
+Copyright (c) 2025 Divyanshu Chandra
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
