@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import express from "express";
-import User from "../models/UserModel.ts";
+import User from "../models/UserModel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
