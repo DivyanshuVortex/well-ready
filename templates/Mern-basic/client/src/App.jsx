@@ -1,6 +1,18 @@
+import React, { useState, useEffect } from "react";
 import "./App.css";
 
 const App = () => {
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("http://localhost:3000/");
+      const result = await response.json();
+      setData(result);
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="app">
 
@@ -32,7 +44,15 @@ const App = () => {
           Flow: <code><span className="specials">React</span> (UI) → <span className="specials">Express</span>/<span className="specials">Node</span> (API) → <span className="specials">MongoDB</span> (Database)</code>
         </p>
       </section>
-
+      {/* Data Display */}
+      <section className="data-section">
+        <h2>Data from Backend:</h2>
+        {data ? (
+          <pre className="data-display">{JSON.stringify(data, null, 2)}</pre>
+        ) : (
+          <p>Loading data...</p>
+        )}
+      </section>
       {/* Footer */}
       <footer className="footer">
         <p>Well-Ready - <span className="specials">MERN</span> Stack</p>

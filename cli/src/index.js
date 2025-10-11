@@ -4,6 +4,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import { execa } from 'execa';
 import chalk from 'chalk';
+import ora from 'ora';
 import { fileURLToPath } from 'url';
 
 // Get __dirname in ESM
@@ -14,7 +15,7 @@ const __dirname = path.dirname(__filename);
 const TEMPLATES_DIR = path.join(__dirname, '../../templates');
 
 async function main() {
-  console.log(chalk.blue.bold('\nWelcome to Well-Ready CLI!\n'));
+  console.log(chalk.cyan.bold('\n🚀 Welcome to Well-Ready CLI!\n'));
 
   // Ask user for template and project name
   const answers = await inquirer.prompt([
@@ -28,7 +29,7 @@ async function main() {
       type: 'input',
       name: 'projectName',
       message: 'Enter your project name:',
-      validate: input => input ? true : 'Project name cannot be empty!',
+      validate: input => input ? true : '❌ Project name cannot be empty!',
     },
   ]);
 
@@ -38,18 +39,23 @@ async function main() {
 
   try {
     // Copy template to new project folder
-    console.log(chalk.yellow('\nCreating project...'));
+    const spinnerCopy = ora(`📂 Creating project folder '${projectName}'...`).start();
     await fs.copy(templatePath, projectPath);
-    console.log(chalk.green('Project created successfully!\n'));
+    spinnerCopy.succeed(chalk.green('✅ Project folder created successfully!'));
 
     // Install dependencies
-    console.log(chalk.yellow('Installing dependencies...'));
-    await execa('pnpm', ['install'], { cwd: projectPath, stdio: 'inherit' });
+    const spinnerInstall = ora('📦 Installing dependencies... This might take a few minutes').start();
+    await execa('npm', ['install'], { cwd: projectPath, stdio: 'inherit' });
+    spinnerInstall.succeed(chalk.green('🎉 Dependencies installed successfully!'));
 
-    console.log(chalk.green.bold(`\nAll done! Navigate to ${projectName} and start coding!\n`));
-    console.log(chalk.blue(`cd ${projectName} && pnpm run dev`));
+    // Final instructions
+    console.log(chalk.blue.bold('\n🚀 All set! Your project is ready.\n'));
+    console.log(chalk.yellow('Next steps:'));
+    console.log(chalk.cyan(`  cd ${projectName}`));
+    console.log(chalk.cyan('  npm run dev\n'));
+    console.log(chalk.green('Happy coding! ✨'));
   } catch (err) {
-    console.error(chalk.red('Error:'), err);
+    console.error(chalk.red('❌ Something went wrong!'), err);
   }
 }
 
