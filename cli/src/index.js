@@ -1,35 +1,59 @@
 #!/usr/bin/env node
-import inquirer from 'inquirer';
-import fs from 'fs-extra';
-import path from 'path';
-import { execa } from 'execa';
-import chalk from 'chalk';
-import ora from 'ora';
-import { fileURLToPath } from 'url';
+import inquirer from "inquirer";
+import fs from "fs-extra";
+import path from "path";
+import { execa } from "execa";
+import chalk from "chalk";
+import ora from "ora";
+import { fileURLToPath } from "url";
 
-// Get __dirname in ESM
+// ESM __dirname setup
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Path to templates relative to this CLI file
-const TEMPLATES_DIR = path.join(__dirname, '../../templates');
+// Path to templates
+const TEMPLATES_DIR = path.join(__dirname, "../../templates");
+// ✅ Final banner displaying only "R CLI"
+ 
+
+
+
+
+
+// Correct ASCII banner for WELL-READY
+const banner = `
+${chalk.blueBright.bold("██╗    ██╗███████╗██╗     ██╗          ██████╗  ███████╗ █████╗ ██████╗ ██╗   ██╗")}
+${chalk.blueBright.bold("██║    ██║██╔════╝██║     ██║          ██╔══██╗ ██╔════╝██╔══██╗██╔══██╗╚██╗ ██╔╝")}
+${chalk.blueBright.bold("██║ █╗ ██║█████╗  ██║     ██║          ██████╔╝ █████╗  ███████║██║  ██║ ╚████╔╝ ")}
+${chalk.blueBright.bold("██║███╗██║██╔══╝  ██║     ██║          ██╔══██╗ ██╔══╝  ██╔══██║██║  ██║  ╚██╔╝  ")}
+${chalk.blueBright.bold("╚███╔███╔╝███████╗███████╗███████╗     ██║  ██║ ███████╗██║  ██║██████╔╝   ██║   ")}
+${chalk.blueBright.bold(" ╚══╝╚══╝ ╚══════╝╚══════╝╚══════╝     ╚═╝  ╚═╝ ╚══════╝╚═╝  ╚═╝╚═════╝    ╚═╝   ")}
+${chalk.cyanBright.bold("                              WELL - READY ⚡ CLI                              ")}
+`;
 
 async function main() {
-  console.log(chalk.cyan.bold('\n🚀 Welcome to Well-Ready CLI!\n'));
+  console.clear();
+  console.log(chalk.cyanBright(banner));
+  console.log(chalk.whiteBright("✨ Welcome to ") + chalk.blueBright.bold("WELL-READY CLI") + chalk.whiteBright(" — Your Instant Project Starter!\n"));
 
-  // Ask user for template and project name
+  // Prompt user for template and project name
   const answers = await inquirer.prompt([
     {
-      type: 'list',
-      name: 'template',
-      message: 'Select a project template:',
-      choices: ['Mern-basic', 'MERN-TS', 'MERN-Tailwind', 'MERN-Tailwind-TS'],
+      type: "list",
+      name: "template",
+      message: chalk.yellow("📦 Select a project template:"),
+      choices: [
+        "nextapp",
+        "Mern-basic",
+        "MERN-TS",
+        "MERN-Tailwind-TS",
+      ],
     },
     {
-      type: 'input',
-      name: 'projectName',
-      message: 'Enter your project name:',
-      validate: input => input ? true : '❌ Project name cannot be empty!',
+      type: "input",
+      name: "projectName",
+      message: chalk.yellow("📝 Enter your project name:"),
+      validate: (input) => input.trim() !== "" || "❌ Project name cannot be empty!",
     },
   ]);
 
@@ -38,24 +62,35 @@ async function main() {
   const projectPath = path.join(process.cwd(), projectName);
 
   try {
-    // Copy template to new project folder
-    const spinnerCopy = ora(`📂 Creating project folder '${projectName}'...`).start();
+    // Step 1: Copy template
+    const spinnerCopy = ora({
+      text: chalk.white(`📂 Creating project folder '${projectName}'...`),
+      color: "cyan",
+    }).start();
+
     await fs.copy(templatePath, projectPath);
-    spinnerCopy.succeed(chalk.green('✅ Project folder created successfully!'));
+    spinnerCopy.succeed(chalk.green("✅ Project folder created successfully!"));
 
-    // Install dependencies
-    const spinnerInstall = ora('📦 Installing dependencies... This might take a few minutes').start();
-    await execa('npm', ['install'], { cwd: projectPath, stdio: 'inherit' });
-    spinnerInstall.succeed(chalk.green('🎉 Dependencies installed successfully!'));
+    // Step 2: Install dependencies
+    const spinnerInstall = ora({
+      text: chalk.white("📦 Installing dependencies..."),
+      color: "blue",
+    }).start();
 
-    // Final instructions
-    console.log(chalk.blue.bold('\n🚀 All set! Your project is ready.\n'));
-    console.log(chalk.yellow('Next steps:'));
-    console.log(chalk.cyan(`  cd ${projectName}`));
-    console.log(chalk.cyan('  npm run dev\n'));
-    console.log(chalk.green('Happy coding! ✨'));
+    await execa("npm", ["install"], { cwd: projectPath, stdio: "inherit" });
+    spinnerInstall.succeed(chalk.green("🎉 Dependencies installed successfully!"));
+
+    // Step 3: Success message
+    console.log("\n" + chalk.cyanBright("───────────────────────────────────────────────"));
+    console.log(chalk.greenBright("🚀 Your project is ready to go!"));
+    console.log(chalk.white("👉 Next steps:"));
+    console.log(chalk.yellow(`   cd ${projectName}`));
+    console.log(chalk.yellow("   npm run dev"));
+    console.log(chalk.cyanBright("───────────────────────────────────────────────\n"));
+    console.log(chalk.green("✨ Happy coding with WELL-READY CLI! 💻"));
   } catch (err) {
-    console.error(chalk.red('❌ Something went wrong!'), err);
+    console.log("\n" + chalk.red.bold("❌ Something went wrong!"));
+    console.error(chalk.red(err.message));
   }
 }
 
