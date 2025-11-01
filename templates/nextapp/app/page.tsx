@@ -18,33 +18,33 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-gray-900 via-blue-900 to-blue-700 text-white px-4 py-10">
-      <h1 className="text-5xl md:text-6xl font-extrabold mb-10 text-center">
-        Well-Ready <span className="text-blue-400">Next</span> Basic App
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-gray-950 via-blue-950 to-blue-800 text-white px-6 py-12">
+      <h1 className="text-5xl md:text-6xl font-extrabold mb-10 text-center tracking-tight">
+        Well-Ready <span className="text-blue-400">Next</span> App
       </h1>
 
-      {/* Next.js Explanation Section */}
-      <section className="max-w-5xl w-full bg-white/10 backdrop-blur-md rounded-2xl shadow-lg p-8 mb-12">
-        <h2 className="text-3xl font-bold mb-6 text-center">
-          How <span className="text-blue-400">Next.js</span> Works 🚀
+      {/* --- Next.js Overview --- */}
+      <section className="max-w-5xl w-full bg-white/5 backdrop-blur-md rounded-2xl shadow-lg p-10 mb-12 border border-white/10">
+        <h2 className="text-3xl font-semibold mb-8 text-center text-blue-300">
+          Understanding the Next.js Structure
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
             {
-              title: "1️⃣ App Directory",
+              title: "App Directory",
               color: "text-blue-300",
-              desc: "The 'app/' folder is where pages, routes, layouts, and API endpoints live. Each folder inside can represent a route.",
+              desc: "The app/ folder defines your routes, pages, layouts, and API endpoints. Each subfolder corresponds to a route.",
             },
             {
-              title: "2️⃣ Server & Client Components",
+              title: "Server & Client Components",
               color: "text-cyan-300",
-              desc: "By default, components run on the server. Add 'use client' to make them interactive (using hooks like useState or useEffect).",
+              desc: "By default, components are server-rendered. Add 'use client' to enable React interactivity and hooks.",
             },
             {
-              title: "3️⃣ API Routes (Backend)",
+              title: "API Routes",
               color: "text-green-300",
-              desc: "You can create backend routes right inside 'app/api/'. Each file like 'route.js' acts as a serverless function.",
+              desc: "Create backend logic directly under app/api/. Each route file acts as a lightweight serverless function.",
             },
           ].map((item, i) => (
             <div
@@ -54,56 +54,123 @@ const Page = () => {
               <h3 className={`text-2xl font-semibold mb-2 ${item.color}`}>
                 {item.title}
               </h3>
-              <p className="text-gray-200 text-sm">{item.desc}</p>
+              <p className="text-gray-200 text-sm leading-relaxed">
+                {item.desc}
+              </p>
             </div>
           ))}
         </div>
 
         <div className="mt-10 bg-white/5 rounded-lg p-6 text-center">
           <h3 className="text-2xl font-semibold text-blue-300 mb-3">
-            🔁 Data Flow in Next.js
+            Data Flow in Next.js
           </h3>
           <p className="text-gray-300 text-sm leading-relaxed">
-            <code className="bg-white/10 px-3 py-1 rounded-md">
-              Client Component → API Route → Server → Response → Rendered UI
+            <code className="bg-black/40 px-3 py-1 rounded-md">
+              Client Component → API Route → Server → Response → UI
             </code>
           </p>
           <p className="mt-3 text-gray-400 text-xs">
-            (No need for a separate Express backend — Next.js handles both
-            frontend and backend seamlessly.)
+            Next.js integrates both frontend and backend layers without needing a separate server setup.
           </p>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white/10 rounded-lg p-5 text-center">
-            <h4 className="text-xl text-yellow-300 font-semibold mb-2">
-              🌍 Server-Side Rendering (SSR)
-            </h4>
-            <p className="text-gray-300 text-sm">
-              Pages are rendered on the server for faster initial load and
-              better SEO.
-            </p>
-          </div>
-          <div className="bg-white/10 rounded-lg p-5 text-center">
-            <h4 className="text-xl text-pink-300 font-semibold mb-2">
-              ⚡ Client Components
-            </h4>
-            <p className="text-gray-300 text-sm">
-              Add interactivity with React hooks, event handlers, and dynamic UI
-              updates.
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="text-center text-gray-400 text-sm mt-auto">
-        <p>
-          Well-Ready — <span className="text-blue-400">Next</span> Stack
+      {/* --- Project Structure --- */}
+      <section className="max-w-5xl w-full bg-white/5 backdrop-blur-md rounded-2xl shadow-lg p-10 mb-12 border border-white/10">
+        <h2 className="text-3xl font-semibold mb-8 text-center text-blue-300">
+          Project Structure Overview
+        </h2>
+
+        <p className="text-gray-200 text-sm mb-6 leading-relaxed">
+          A concise view of your project layout and its key directories:
         </p>
+
+        <pre className="bg-black/30 text-gray-200 text-xs rounded-lg p-4 overflow-x-auto mb-6">
+{`. 
+├── app/
+│   ├── api/             → Backend API routes
+│   ├── globals.css      → Global styles
+│   ├── layout.tsx       → Root layout
+│   └── page.tsx         → Main landing page
+├── prisma/
+│   └── schema.prisma    → Database schema
+├── public/              → Static assets (icons, images)
+├── package.json         → Project dependencies and scripts
+├── tsconfig.json        → TypeScript configuration
+├── postcss.config.mjs   → Tailwind/PostCSS settings
+├── eslint.config.mjs    → Linting rules
+├── next.config.ts       → Next.js configuration
+└── README.md            → Project documentation`}
+        </pre>
+
+        <p className="text-gray-400 text-sm leading-relaxed">
+          The <code>app/</code> folder manages routes and rendering.  
+          <code>prisma/</code> defines database structure.  
+          <code>public/</code> holds static assets.  
+          Core config files ensure consistent development setup.
+        </p>
+      </section>
+
+      {/* --- Prisma & CLI Setup --- */}
+      <section className="max-w-5xl w-full bg-white/5 backdrop-blur-md rounded-2xl shadow-lg p-10 mb-12 border border-blue-400/20">
+        <h2 className="text-3xl font-semibold mb-8 text-center text-blue-300">
+          Prisma & CLI Setup
+        </h2>
+
+        <p className="text-gray-200 text-sm leading-relaxed mb-6">
+          When generating a new app via CLI, Prisma setup can be partly automated. Below outlines what’s handled automatically and what requires manual input.
+        </p>
+
+        <div className="bg-white/5 rounded-lg p-5 mb-4">
+          <h3 className="text-xl text-blue-300 font-semibold mb-2">
+            Automatically Done by CLI:
+          </h3>
+          <ul className="list-disc list-inside text-gray-300 text-sm space-y-1">
+            <li>Create a Next.js app (<code>npx create-next-app</code>)</li>
+            <li>Install Prisma and client libraries</li>
+            <li>Run <code>npx prisma init</code> (creates <code>schema.prisma</code> & <code>.env</code>)</li>
+            <li>Add a base <code>User</code> model in schema</li>
+          </ul>
+        </div>
+
+        <div className="bg-white/5 rounded-lg p-5 mb-4">
+          <h3 className="text-xl text-yellow-300 font-semibold mb-2">
+            Manual Steps Required:
+          </h3>
+          <ul className="list-disc list-inside text-gray-300 text-sm space-y-1">
+            <li>Set a valid <code>DATABASE_URL</code> inside <code>.env</code></li>
+            <li>Run <code>npx prisma generate</code></li>
+            <li>Run <code>npx prisma migrate dev --name init</code></li>
+          </ul>
+        </div>
+
+        <div className="bg-white/5 rounded-lg p-5">
+          <h3 className="text-xl text-green-300 font-semibold mb-2">
+            Example CLI Output:
+          </h3>
+          <pre className="bg-black/30 text-gray-200 text-xs rounded-lg p-4 mt-2">
+{`Project created successfully.
+
+Next steps:
+  1. Update .env with a valid DATABASE_URL
+  2. Run:
+     npx prisma generate
+     npx prisma migrate dev --name init
+  3. Start your app:
+     npm run dev`}
+          </pre>
+        </div>
+      </section>
+
+      {/* --- Footer --- */}
+      <footer className="text-center text-gray-400 text-sm mt-auto border-t border-white/10 pt-6">
         <p>
-          Made by{" "}
-          <span className="text-white font-semibold">Divyanshu Chandra</span> |{" "}
+          Well-Ready <span className="text-blue-400">Next</span> Stack
+        </p>
+        <p className="mt-1">
+          Built by{" "}
+          <span className="text-white font-semibold">Divyanshu Chandra</span> ·{" "}
           <a
             href="https://www.linkedin.com/in/divyanshu-chandra-66074926b/"
             className="text-blue-300 hover:text-blue-400"
@@ -111,7 +178,7 @@ const Page = () => {
           >
             LinkedIn
           </a>{" "}
-          ||{" "}
+          ·{" "}
           <a
             href="https://github.com/DivyanshuVortex"
             className="text-blue-300 hover:text-blue-400"
