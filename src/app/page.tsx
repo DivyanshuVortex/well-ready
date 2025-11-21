@@ -57,16 +57,6 @@ const templates = [
   },
 ];
 
-// Motion variants for staggered file reveal
-const lineVariants = {
-  hidden: { opacity: 0, y: 4 },
-  visible: (i: number) => ({
-    opacity: 1,
-    y: 0,
-    transition: { delay: i * 0.05, duration: 0.12, ease: "easeOut" },
-  }),
-};
-
 // Subtle tilt micro-interaction
 const useTilt = () => {
   const ref = useRef<HTMLDivElement>(null);
@@ -240,10 +230,12 @@ export default function App() {
                       {t.structure.map((line, idx) => (
                         <motion.div
                           key={idx}
-                          custom={idx}
-                          variants={lineVariants}
-                          initial="hidden"
-                          animate={hovered === i ? "visible" : "hidden"}
+                          initial={{ opacity: 0, y: 4 }}
+                          animate={hovered === i ? { 
+                            opacity: 1, 
+                            y: 0,
+                            transition: { delay: idx * 0.05, duration: 0.12 }
+                          } : { opacity: 0, y: 4 }}
                           className="whitespace-pre"
                         >
                           {line}
