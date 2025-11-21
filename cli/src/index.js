@@ -43,10 +43,14 @@ async function main() {
       name: "template",
       message: chalk.yellow("📦 Select a project template:"),
       choices: [
-        "nextapp",
-        "Mern-basic",
-        "MERN-TS",
-        "MERN-Tailwind-TS",
+        { name: "Next.js + Prisma", value: "nextjs-prisma" },
+        { name: "Next.js App Router", value: "nextjs-app-router" },
+        { name: "MERN Stack (Basic)", value: "mern-basic" },
+        { name: "MERN Stack (TypeScript)", value: "mern-ts" },
+        { name: "MERN Stack (TypeScript + Tailwind)", value: "mern-ts-tailwind" },
+        { name: "React + Vite (TypeScript)", value: "react-vite-ts" },
+        { name: "React + Vite + Tailwind", value: "react-vite-tailwind" },
+        { name: "Express API (TypeScript)", value: "express-ts" },
       ],
     },
     {

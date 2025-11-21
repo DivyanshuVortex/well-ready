@@ -2,28 +2,28 @@
 
 import { motion } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
-import { FolderTree, Database, Code2, Globe, Terminal } from "lucide-react";
+import { FolderTree, Database, Code2, Globe, Terminal, Server, Layers, Zap } from "lucide-react";
 
 // Template Metadata
 const templates = [
   {
-    name: "Next.js + Prisma Starter",
-    description: "Modern Next.js 14 stack with Prisma, Tailwind CSS, and optimized developer workflow.",
+    name: "Next.js + Prisma",
+    description: "Full-stack Next.js 15 App Router with Prisma ORM and Tailwind CSS v4.",
     icon: Globe,
     structure: [
-      "project-root/",
+      "nextjs-prisma/",
       " ├── app/",
       " ├── prisma/schema.prisma",
-      " ├── next.config.js",
+      " ├── next.config.ts",
       " └── package.json",
     ],
   },
   {
-    name: "MERN Stack (TypeSafe)",
-    description: "End-to-end typed setup using MongoDB, Express, React, and Node.js with TypeScript.",
+    name: "MERN Stack (TS)",
+    description: "Production-ready MERN stack with TypeScript, Tailwind v4, and JWT auth.",
     icon: Database,
     structure: [
-      "mern-ts-stack/",
+      "mern-ts/",
       " ├── client/src/",
       " ├── server/src/",
       " ├── tsconfig.json",
@@ -31,15 +31,28 @@ const templates = [
     ],
   },
   {
-    name: "T3 Stack (Monorepo)",
-    description: "Turbo monorepo including Next.js, tRPC, Prisma, and Tailwind — production ready.",
-    icon: Code2,
+    name: "Vite + React (TS)",
+    description: "Blazing fast Vite + React 19 setup with TypeScript and Tailwind v4.",
+    icon: Zap,
     structure: [
-      "t3-monorepo/",
-      " ├── apps/web/",
-      " ├── packages/api/",
-      " ├── packages/db/",
-      " └── turbo.json",
+      "react-vite-ts/",
+      " ├── src/",
+      " ├── vite.config.ts",
+      " ├── tailwind.config.js",
+      " └── package.json",
+    ],
+  },
+  {
+    name: "Express API (TS)",
+    description: "Robust Express.js backend with TypeScript, MongoDB, and security best practices.",
+    icon: Server,
+    structure: [
+      "express-ts/",
+      " ├── src/",
+      " │   ├── controllers/",
+      " │   ├── models/",
+      " │   └── routes/",
+      " └── package.json",
     ],
   },
 ];
@@ -106,11 +119,11 @@ const CommandChip = ({ text }: { text: string }) => {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.3 }}
-      className={`flex items-center px-6 py-3 rounded-lg border font-mono text-sm tracking-tight transition-all
+      className={`flex items-center px-6 py-3 rounded-lg border font-mono text-sm tracking-tight transition-all cursor-pointer
         ${
           copied
             ? "border-cyan-400/80 bg-cyan-500/10 text-cyan-300"
-            : "border-gray-700 bg-gray-800/60 text-gray-200 hover:border-cyan-400/50 hover:bg-gray-800/80"
+            : "border-slate-700 bg-slate-800/60 text-slate-200 hover:border-cyan-400/50 hover:bg-slate-800/80"
         }`}
     >
       <Terminal className="w-4 h-4 mr-2 opacity-80" />
@@ -124,7 +137,7 @@ export default function App() {
   const [hovered, setHovered] = useState<number | null>(null);
 
   return (
-    <main className="min-h-screen bg-[#0a0a0b] text-white font-sans">
+    <main className="min-h-screen bg-slate-950 text-white font-sans selection:bg-cyan-500/30">
       <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
         rel="stylesheet"
@@ -135,89 +148,129 @@ export default function App() {
       `}</style>
 
       {/* Hero */}
-      <section className="text-center pt-28 pb-20">
+      <section className="text-center pt-32 pb-20 relative overflow-hidden">
+        {/* Background Glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[100px] -z-10" />
+        
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           className="max-w-4xl mx-auto px-6"
         >
-          <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight mb-4">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-indigo-400">
-              Stack Precision
+          <div className="inline-flex items-center px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 text-xs font-medium mb-6">
+            <Zap className="w-3 h-3 mr-1.5" /> v0.1.15 Now Available
+          </div>
+          <h1 className="text-6xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+            Build Faster with <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500">
+              Well-Ready CLI
             </span>
           </h1>
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto">
-            Generate, configure, and launch type-safe Next.js stacks instantly.
+          <p className="text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+            Instant project scaffolding for modern web stacks. <br className="hidden md:block" />
+            Next.js, MERN, Vite, and Express templates — pre-configured and type-safe.
           </p>
-          <div className="mt-10">
-            <CommandChip text="npx @stack-precision/cli create latest" />
+          <div className="flex justify-center">
+            <CommandChip text="npm run cli" />
           </div>
         </motion.div>
       </section>
 
       {/* Template Cards */}
-      <section className="max-w-6xl mx-auto px-6 pb-24 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-        {templates.map((t, i) => {
-          const ref = useTilt();
+      <section className="max-w-7xl mx-auto px-6 pb-32">
+        <div className="flex items-center mb-12">
+          <Layers className="w-6 h-6 text-cyan-400 mr-3" />
+          <h2 className="text-2xl font-bold text-slate-200">Available Stacks</h2>
+          <div className="h-px bg-slate-800 flex-grow ml-6" />
+        </div>
+        
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {templates.map((t, i) => {
+            const ref = useTilt();
 
-          return (
-            <motion.div
-              key={i}
-              ref={ref}
-              onMouseEnter={() => setHovered(i)}
-              onMouseLeave={() => setHovered(null)}
-              className={`tilt relative rounded-xl border bg-gray-900/40 backdrop-blur-sm overflow-hidden
-                transition-all duration-300 ${
-                  hovered === i
-                    ? "border-cyan-400/50 shadow-[0_0_16px_rgba(0,255,255,0.15)]"
-                    : "border-gray-800"
-                }`}
-            >
-              {/* Card Base */}
-              <div className="p-6">
-                <div className="flex flex-col items-center text-center">
-                  <t.icon className="w-10 h-10 text-cyan-400 mb-3" />
-                  <h3 className="text-lg font-semibold mb-2">{t.name}</h3>
-                  <p className="text-sm text-gray-400 leading-snug">{t.description}</p>
-                </div>
-              </div>
-
-              {/* Overlay — File Structure */}
+            return (
               <motion.div
-                className="absolute inset-0 bg-[#0b0b0c]/95 p-6 overflow-hidden"
-                initial={{ opacity: 0, y: 8 }}
-                animate={
-                  hovered === i ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }
-                }
-                transition={{ duration: 0.25, ease: "easeOut" }}
+                key={i}
+                ref={ref}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1, duration: 0.5 }}
+                onMouseEnter={() => setHovered(i)}
+                onMouseLeave={() => setHovered(null)}
+                className={`tilt relative rounded-2xl border bg-slate-900/50 backdrop-blur-sm overflow-hidden
+                  transition-all duration-300 h-full group ${
+                    hovered === i
+                      ? "border-cyan-400/50 shadow-[0_0_20px_rgba(6,182,212,0.15)]"
+                      : "border-slate-800 hover:border-slate-700"
+                  }`}
               >
-                <div className="flex items-center text-cyan-400 text-sm font-medium mb-3">
-                  <FolderTree className="w-4 h-4 mr-2" /> FILE STRUCTURE
+                {/* Card Base */}
+                <div className="p-6 h-full flex flex-col">
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-5 transition-colors duration-300 ${
+                    hovered === i ? "bg-cyan-500/20 text-cyan-300" : "bg-slate-800 text-slate-400"
+                  }`}>
+                    <t.icon className="w-6 h-6" />
+                  </div>
+                  
+                  <h3 className="text-lg font-bold text-slate-100 mb-2 group-hover:text-cyan-300 transition-colors">
+                    {t.name}
+                  </h3>
+                  <p className="text-sm text-slate-400 leading-relaxed flex-grow">
+                    {t.description}
+                  </p>
                 </div>
-                <pre className="text-gray-300 text-xs font-mono leading-tight">
-                  {t.structure.map((line, idx) => (
-                    <motion.span
-                      key={idx}
-                      custom={idx}
-                      variants={lineVariants}
-                      initial="hidden"
-                      animate={hovered === i ? "visible" : "hidden"}
-                      className="block whitespace-pre"
-                    >
-                      {line}
-                    </motion.span>
-                  ))}
-                </pre>
+
+                {/* Overlay — File Structure */}
+                <motion.div
+                  className="absolute inset-0 bg-slate-950/95 p-6 flex flex-col justify-center"
+                  initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+                  animate={
+                    hovered === i 
+                      ? { opacity: 1, backdropFilter: "blur(4px)" } 
+                      : { opacity: 0, backdropFilter: "blur(0px)" }
+                  }
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="flex items-center text-cyan-400 text-xs font-bold tracking-wider mb-4 uppercase">
+                    <FolderTree className="w-3 h-3 mr-2" /> Project Structure
+                  </div>
+                  <div className="pl-2 border-l border-slate-800">
+                    <pre className="text-slate-300 text-xs font-mono leading-loose">
+                      {t.structure.map((line, idx) => (
+                        <motion.div
+                          key={idx}
+                          custom={idx}
+                          variants={lineVariants}
+                          initial="hidden"
+                          animate={hovered === i ? "visible" : "hidden"}
+                          className="whitespace-pre"
+                        >
+                          {line}
+                        </motion.div>
+                      ))}
+                    </pre>
+                  </div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          );
-        })}
+            );
+          })}
+        </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-900/80 py-8 text-center text-sm text-gray-500">
-        © {new Date().getFullYear()} Stack Precision. All rights reserved.
+      <footer className="border-t border-slate-900 py-12 bg-slate-950">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+          <div className="flex items-center mb-4 md:mb-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-sm mr-3">
+              W
+            </div>
+            <span className="text-slate-300 font-semibold">Well-Ready CLI</span>
+          </div>
+          <div className="text-slate-500 text-sm">
+            © {new Date().getFullYear()} Well-Ready. Open Source.
+          </div>
+        </div>
       </footer>
     </main>
   );
