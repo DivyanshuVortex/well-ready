@@ -276,7 +276,7 @@ export default function App() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <CommandChip text="npx well-ready" />
             <a 
-              href="https://github.com/DivyanshuVortex/well-ready"
+              href="https://github.com/DivyanshuVortex/well-ready/blob/master/TEMPLATES.md"
               target="_blank" 
               rel="noopener noreferrer"
               className="px-6 py-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white transition-colors flex items-center group"

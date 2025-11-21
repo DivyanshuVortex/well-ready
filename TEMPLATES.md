@@ -121,22 +121,3 @@ project-name/
 ├── package.json
 └── tsconfig.json
 ```
-
-## Quick Start
-
-1. **Run the CLI**:
-   ```bash
-   npm run cli
-   ```
-
-2. **Select a template** from the list
-
-3. **Enter your project name**
-
-4. **Wait for installation** (dependencies are auto-installed)
-
-5. **Start developing**:
-   ```bash
-   cd your-project-name
-   npm run dev
-   ```
