@@ -1,6 +1,6 @@
 {
   "name": "well-ready",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
