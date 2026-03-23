@@ -6,7 +6,7 @@ import { execa } from "execa";
 import chalk from "chalk";
 import ora from "ora";
 import { fileURLToPath } from "url";
-import Groq from "groq-sdk";
+// Groq SDK removed for security (using API proxy instead)
 import "dotenv/config";
 
 // ESM __dirname setup
@@ -121,13 +121,6 @@ async function main() {
 }
 
 async function handleVoiceCommand() {
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) {
-    console.log(chalk.red("\n❌ GROQ_API_KEY not found in environment variables."));
-    process.exit(1);
-  }
-
-  const groq = new Groq({ apiKey });
   const recordingPath = path.join(process.cwd(), "recording.wav");
   let recordingSuccess = false;
   let transcription = "";
@@ -179,52 +172,47 @@ async function handleVoiceCommand() {
     if (!recordingSuccess) {
       spinnerRecord.warn(chalk.yellow("⚠️ Audio recording failed or skipped. Falling back to manual text input."));
       const { manualInput } = await inquirer.prompt([{
-      type: "input",
-      name: "manualInput",
-      message: chalk.cyan("⌨️ Describe your project (e.g., 'MERN stack with TypeScript called my-app'):"),
-      validate: (input) => input.trim() !== "" || "❌ Input cannot be empty!",
-    }]);
-    transcription = manualInput;
+        type: "input",
+        name: "manualInput",
+        message: chalk.cyan("⌨️ Describe your project (e.g., 'MERN stack with TypeScript called my-app'):"),
+        validate: (input) => input.trim() !== "" || "❌ Input cannot be empty!",
+      }]);
+      transcription = manualInput;
+    }
   }
-}
 
-  const spinnerAI = ora({ text: chalk.white("🧠 Processing with AI..."), color: "magenta" }).start();
+  const spinnerAI = ora({ text: chalk.white("🧠 Processing with AI (via Proxy)..."), color: "magenta" }).start();
 
   try {
+    const formData = new FormData();
     if (recordingSuccess) {
-      const transcriptionResponse = await groq.audio.transcriptions.create({
-        file: fs.createReadStream(recordingPath),
-        model: "whisper-large-v3",
-        language: "en",
-        prompt: "Next.js, Prisma, MERN, React, Vite, Tailwind, Express, TypeScript, JavaScript, node.js, well-ready CLI",
-      });
-      transcription = transcriptionResponse.text;
-      console.log(chalk.gray(`\n🎤 Transcribed: "${transcription}"`));
+      const fileBuffer = await fs.readFile(recordingPath);
+      const blob = new Blob([fileBuffer], { type: "audio/wav" });
+      formData.append("file", blob, "recording.wav");
       await fs.remove(recordingPath);
+    } else {
+      formData.append("text", transcription);
     }
 
-    const completion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "system",
-          content: `You are an assistant for the WELL-READY CLI.
-          Map the user's request to one of these templates: express-ts, mern-basic, mern-ts, mern-ts-tailwind, nextjs-app-router, nextjs-prisma, react-vite-tailwind, react-vite-ts.
-          
-          Extract a project name if mentioned (e.g., "named ANYTHUG", "with the name of ANYTHUG", "called X").
-          If no name is mentioned, use "my-well-ready-project".
-          
-          Return ONLY valid JSON: { "template": "template-name", "projectName": "name" }`,
-        },
-        {
-          role: "user",
-          content: transcription,
-        },
-      ],
-      model: "llama-3.3-70b-versatile",
-      response_format: { type: "json_object" },
+    // Use production URL by default, or an environment variable for local testing
+    const API_URL = process.env.WELL_READY_API_URL || "https://well-ready.vercel.app/api/ai"; 
+    
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: formData,
     });
 
-    const aiResult = JSON.parse(completion.choices[0].message.content);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API Proxy Error: ${response.statusText}`);
+    }
+
+    const aiResult = await response.json();
+    
+    if (aiResult.transcription) {
+      console.log(chalk.gray(`\n🎤 Transcribed: "${aiResult.transcription}"`));
+    }
+
     spinnerAI.succeed(chalk.green("✨ Request structured!"));
 
     // UX: If AI didn't catch a name, ask the user
@@ -242,6 +230,7 @@ async function handleVoiceCommand() {
   } catch (err) {
     spinnerAI.fail(chalk.red("❌ AI processing failed."));
     console.error(chalk.gray(err.message));
+    console.log(chalk.gray("Note: Ensure your local dev server (npm run dev) is running if testing via localhost."));
     return null;
   }
 }
