@@ -6,6 +6,8 @@ import { execa } from "execa";
 import chalk from "chalk";
 import ora from "ora";
 import { fileURLToPath } from "url";
+// Groq SDK removed for security (using API proxy instead)
+import "dotenv/config";
 
 // ESM __dirname setup
 const __filename = fileURLToPath(import.meta.url);
@@ -51,6 +53,8 @@ async function main() {
         { name: "React + Vite (TypeScript)", value: "react-vite-ts" },
         { name: "React + Vite + Tailwind", value: "react-vite-tailwind" },
         { name: "Express API (TypeScript)", value: "express-ts" },
+        new inquirer.Separator(),
+        { name: chalk.cyanBright("🎤 Voice Command (AI Powered)"), value: "voice" },
       ],
     },
     {
@@ -58,14 +62,29 @@ async function main() {
       name: "projectName",
       message: chalk.yellow("📝 Enter your project name:"),
       validate: (input) => input.trim() !== "" || "❌ Project name cannot be empty!",
+      when: (currentAnswers) => currentAnswers.template !== "voice",
     },
   ]);
 
-  const { template, projectName } = answers;
+  let { template, projectName } = answers;
+
+  if (template === "voice") {
+    const aiResult = await handleVoiceCommand();
+    if (!aiResult) return;
+    ({ template, projectName } = aiResult);
+    
+    console.log(chalk.cyan("\n🤖 AI Interpretation:"));
+    console.log(chalk.white(`   📦 Template: `) + chalk.green(template));
+    console.log(chalk.white(`   📝 Project:  `) + chalk.green(projectName) + "\n");
+  }
+
   const templatePath = path.join(TEMPLATES_DIR, template);
   const projectPath = path.join(process.cwd(), projectName);
 
   try {
+    if (!(await fs.pathExists(templatePath))) {
+      throw new Error(`Template '${template}' not found in ${TEMPLATES_DIR}`);
+    }
     // Step 1: Copy template
     const spinnerCopy = ora({
       text: chalk.white(`📂 Creating project folder '${projectName}'...`),
@@ -85,16 +104,134 @@ async function main() {
     spinnerInstall.succeed(chalk.green("🎉 Dependencies installed successfully!"));
 
     // Step 3: Success message
-    console.log("\n" + chalk.cyanBright("───────────────────────────────────────────────"));
-    console.log(chalk.greenBright("🚀 Your project is ready to go!"));
-    console.log(chalk.white("👉 Next steps:"));
-    console.log(chalk.yellow(`   cd ${projectName}`));
-    console.log(chalk.yellow("   npm run dev"));
-    console.log(chalk.cyanBright("───────────────────────────────────────────────\n"));
+    const nextSteps = template.includes("nextjs") ? "npm run dev" : template.includes("mern") ? "npm run dev (root)" : "npm run dev";
+
+    console.log("\n" + chalk.cyanBright("╭──────────────────────────────────────────────╮"));
+    console.log(chalk.cyanBright("│") + chalk.greenBright.bold("  🚀 YOUR PROJECT IS READY TO GO!             ") + chalk.cyanBright("│"));
+    console.log(chalk.cyanBright("├──────────────────────────────────────────────┤"));
+    console.log(chalk.cyanBright("│") + chalk.white("  👉 Next steps:                              ") + chalk.cyanBright("│"));
+    console.log(chalk.cyanBright("│") + chalk.yellow(`     cd ${projectName.padEnd(30)} `) + chalk.cyanBright("│"));
+    console.log(chalk.cyanBright("│") + chalk.yellow(`     ${nextSteps.padEnd(33)} `) + chalk.cyanBright("│"));
+    console.log(chalk.cyanBright("╰──────────────────────────────────────────────╯\n"));
     console.log(chalk.green("✨ Happy coding with WELL-READY CLI! 💻"));
   } catch (err) {
     console.log("\n" + chalk.red.bold("❌ Something went wrong!"));
     console.error(chalk.red(err.message));
+  }
+}
+
+async function handleVoiceCommand() {
+  const recordingPath = path.join(process.cwd(), "recording.wav");
+  let recordingSuccess = false;
+  let transcription = "";
+
+  const spinnerRecord = ora({
+    text: chalk.white("🎤 Recording... (10s left) - Press Enter to stop early"),
+    color: "red",
+  }).start();
+
+  let timeLeft = 10;
+  const countdownInterval = setInterval(() => {
+    timeLeft -= 1;
+    if (timeLeft > 0) {
+      spinnerRecord.text = chalk.white(`🎤 Recording... (${timeLeft}s left) - Press Enter to stop early`);
+    } else {
+      clearInterval(countdownInterval);
+    }
+  }, 1000);
+
+  try {
+    const ffmpegProc = execa("ffmpeg", ["-f", "pulse", "-i", "default", "-t", "10", "-y", recordingPath]);
+
+    // Listen for Enter to stop early
+    const rl = (await import("readline")).createInterface({
+      input: process.stdin,
+      terminal: false
+    });
+
+    const stopEarly = new Promise((resolve) => {
+      rl.on("line", () => {
+        ffmpegProc.kill("SIGINT");
+        resolve();
+      });
+      ffmpegProc.on("exit", () => resolve());
+    });
+
+    await stopEarly;
+    clearInterval(countdownInterval);
+    rl.close();
+    recordingSuccess = (await fs.pathExists(recordingPath)) && (await fs.stat(recordingPath)).size > 1000;
+    
+    if (recordingSuccess) {
+      spinnerRecord.succeed(chalk.green("✅ Recording captured!"));
+    } else {
+      throw new Error("Recording too short or failed.");
+    }
+  } catch (err) {
+    clearInterval(countdownInterval);
+    if (!recordingSuccess) {
+      spinnerRecord.warn(chalk.yellow("⚠️ Audio recording failed or skipped. Falling back to manual text input."));
+      const { manualInput } = await inquirer.prompt([{
+        type: "input",
+        name: "manualInput",
+        message: chalk.cyan("⌨️ Describe your project (e.g., 'MERN stack with TypeScript called my-app'):"),
+        validate: (input) => input.trim() !== "" || "❌ Input cannot be empty!",
+      }]);
+      transcription = manualInput;
+    }
+  }
+
+  const spinnerAI = ora({ text: chalk.white("🧠 Processing with AI (via Proxy)..."), color: "magenta" }).start();
+
+  try {
+    const formData = new FormData();
+    if (recordingSuccess) {
+      const fileBuffer = await fs.readFile(recordingPath);
+      const blob = new Blob([fileBuffer], { type: "audio/wav" });
+      formData.append("file", blob, "recording.wav");
+      await fs.remove(recordingPath);
+    } else {
+      formData.append("text", transcription);
+    }
+
+    // Use production URL by default, or an environment variable for local testing
+    const API_URL = process.env.WELL_READY_API_URL || "https://well-ready.vercel.app/api/ai"; 
+    
+    const response = await fetch(API_URL, {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API Proxy Error: ${response.statusText}`);
+    }
+
+    const aiResult = await response.json();
+    
+    if (aiResult.transcription) {
+      console.log(chalk.gray(`\n🎤 Transcribed: "${aiResult.transcription}"`));
+    }
+
+    spinnerAI.succeed(chalk.green("✨ Request structured!"));
+
+    // UX: If AI didn't catch a name, ask the user
+    if (aiResult.projectName === "my-well-ready-project") {
+      const { manualName } = await inquirer.prompt([{
+        type: "input",
+        name: "manualName",
+        message: chalk.yellow("📝 AI couldn't find a project name. What should we call it?"),
+        default: "my-well-ready-project",
+      }]);
+      aiResult.projectName = manualName;
+    }
+
+    return aiResult;
+  } catch (err) {
+    spinnerAI.fail(chalk.red("❌ AI processing failed."));
+    console.error(chalk.gray(err.message));
+    console.log(chalk.gray("Note: Ensure your local dev server (npm run dev) is running if testing via localhost."));
+    return null;
   }
 }
 
