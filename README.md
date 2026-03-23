@@ -12,6 +12,7 @@
 -  **Tailwind CSS Integration**: Fully configured Tailwind CSS for rapid UI development.
 -  **ESLint Configuration**: Enforces code quality with standard ESLint rules and plugins.
 -  **Prettier Formatting**: Automatic code formatting for consistent style across your project.
+-  **AI Voice Command**: Bootstrap your project using natural language (powered by Groq AI). Just speak and your project is ready!
 -  **Quick Start**: One-command setup to get you coding faster without manual configurations.
 
 ## Usage
@@ -42,6 +43,11 @@ Below is a breakdown of the core technologies powering the CLI:
 - **TypeScript** — Strong typing, improved DX, safer codebase  
 - **ESM Modules** — Modern module system for better compatibility and performance  
 - **npm** — Package distribution + dependency management
+
+### **AI & Voice (New)**
+- **Groq AI** — Ultra-fast Llama-3.3 for intelligent template mapping
+- **Whisper (via Groq)** — High-accuracy speech-to-text transcription
+- **ffmpeg** — Core engine for high-quality audio recording
 
 ### **CLI Functionality**
 - **Inquirer / Prompts** — Interactive terminal prompts for template selection  
